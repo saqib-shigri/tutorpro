@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>TutorPro - Simple Fee Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 28px;
+            padding: 45px 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        .login-card h1 {
+            text-align: center;
+            font-size: 28px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .login-card p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            font-size: 15px;
+        }
+
+        .login-card input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-card button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .error-msg {
+            color: #dc2626;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header h1 {
+            color: #1e293b;
+            font-size: 24px;
+        }
+
+        .header h1 i {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-right: 10px;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .logout-btn i {
+            margin-right: 8px;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 22px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .stat-icon.blue { color: #3b82f6; }
+        .stat-icon.green { color: #10b981; }
+        .stat-icon.red { color: #ef4444; }
+        .stat-icon.purple { color: #8b5cf6; }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .stat-label {
+            color: #64748b;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card h3 {
+            margin-bottom: 18px;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .card h3 i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-secondary { background: #64748b; color: white; }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        /* Forms */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row input {
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-row input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .status-paid {
+            background: #d1fae5;
+            color: #059669;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .subject-tag {
+            background: #e0e7ff;
+            color: #4338ca;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 500;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+        }
+
+        .modal-content h3 i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+
+        .modal-content select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1e293b;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 16px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 1100;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success { background: #10b981; }
+        .toast.warning { background: #f59e0b; }
+        .toast.info { background: #3b82f6; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 10px;
+            }
+            .stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .stat-number {
+                font-size: 24px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+            .action-group {
+                flex-direction: column;
+            }
+            th, td {
+                font-size: 11px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="login-container">
+    <div class="login-card">
+        <h1><i class="fas fa-chalkboard-user"></i> TutorPro</h1>
+        <p>Simple Fee Management System</p>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()"><i class="fas fa-arrow-right-to-bracket"></i> Sign In</button>
+        <div id="errorMsg" class="error-msg"><i class="fas fa-exclamation-triangle"></i> Invalid username or password!</div>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="dashboard">
+    <div class="header">
+        <h1><i class="fas fa-chalkboard-user"></i> TutorPro - Fee Manager</h1>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-icon blue"><i class="fas fa-user-graduate"></i></div>
+            <div class="stat-number" id="totalStudents">0</div>
+            <div class="stat-label">Total Students</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="stat-number" id="collectedAmount">0</div>
+            <div class="stat-label">Collected (PKR)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon red"><i class="fas fa-hourglass-half"></i></div>
+            <div class="stat-number" id="pendingAmount">0</div>
+            <div class="stat-label">Pending (PKR)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-number" id="collectionRate">0%</div>
+            <div class="stat-label">Collection Rate</div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+        <div class="action-group">
+            <button class="btn btn-warning" onclick="sendReminderToDefaulters()"><i class="fas fa-bullhorn"></i> Send Reminder</button>
+            <button class="btn btn-success" onclick="openPaymentModal()"><i class="fas fa-check-circle"></i> Mark Fee Paid</button>
+            <button class="btn btn-primary" onclick="exportData()"><i class="fas fa-download"></i> Export Data</button>
+        </div>
+    </div>
+
+    <!-- Add Student -->
+    <div class="card">
+        <h3><i class="fas fa-user-plus"></i> Register New Student</h3>
+        <div class="form-row">
+            <input type="text" id="studentName" placeholder="Student Name">
+            <input type="text" id="studentClass" placeholder="Grade / Class">
+            <input type="text" id="studentSubjects" placeholder="Subjects (e.g., Math, English)">
+            <input type="number" id="studentFee" placeholder="Monthly Fee (PKR)">
+            <input type="tel" id="studentPhone" placeholder="WhatsApp Number">
+        </div>
+        <button class="btn btn-success" onclick="addStudent()"><i class="fas fa-save"></i> Register Student</button>
+    </div>
+
+    <!-- Month Selector -->
+    <div class="card">
+        <h3><i class="fas fa-calendar-alt"></i> Select Month</h3>
+        <select id="monthSelector" class="form-control" style="width:100%; padding:12px; border-radius:12px;" onchange="changeMonth()">
+            <option value="">-- Current Month --</option>
+        </select>
+    </div>
+
+    <!-- Students List -->
+    <div class="card">
+        <h3><i class="fas fa-users"></i> Students List - <span id="tableMonthLabel">Current Month</span></h3>
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search by name, grade or phone..." onkeyup="renderTable()">
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i></th>
+                        <th><i class="fas fa-user"></i> Name</th>
+                        <th><i class="fas fa-graduation-cap"></i> Grade</th>
+                        <th><i class="fas fa-book"></i> Subjects</th>
+                        <th><i class="fas fa-dollar-sign"></i> Fee</th>
+                        <th><i class="fas fa-flag-checkered"></i> Status</th>
+                        <th><i class="fas fa-phone"></i> Phone</th>
+                        <th><i class="fas fa-cog"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Student Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h3><i class="fas fa-pen"></i> Edit Student</h3>
+        <input type="hidden" id="editStudentId">
+        <input type="text" id="editName" placeholder="Student Name">
+        <input type="text" id="editClass" placeholder="Grade/Class">
+        <input type="text" id="editSubjects" placeholder="Subjects">
+        <input type="number" id="editFee" placeholder="Monthly Fee (PKR)">
+        <input type="tel" id="editPhone" placeholder="WhatsApp Number">
+        <div class="modal-buttons">
+            <button class="btn btn-success" onclick="saveEditStudent()"><i class="fas fa-save"></i> Save</button>
+            <button class="btn btn-secondary" onclick="closeEditModal()"><i class="fas fa-times"></i> Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div id="paymentModal" class="modal">
+    <div class="modal-content">
+        <h3><i class="fas fa-check-circle"></i> Mark Fee as Paid</h3>
+        <select id="paymentSelect"></select>
+        <div class="modal-buttons">
+            <button class="btn btn-success" onclick="confirmPayment()"><i class="fas fa-check"></i> Confirm</button>
+            <button class="btn btn-secondary" onclick="closePaymentModal()"><i class="fas fa-times"></i> Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast">
+    <i class="fas" id="toastIcon"></i>
+    <span id="toastMessage"></span>
+</div>
+
+<script>
+    // ========== CONFIGURATION ==========
+    let USERNAME = "tutor";
+    let PASSWORD = "tutor123";
+    
+    let students = [];
+    let feeRecords = {};
+    let currentViewMonth = null;
+    
+    // ========== HELPER FUNCTIONS ==========
+    function getCurrentMonthKey() {
+        const now = new Date();
+        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    }
+    
+    function getMonthDisplay(monthKey) {
+        if (!monthKey) return getCurrentMonthYear();
+        const [year, month] = monthKey.split('-');
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        return `${months[parseInt(month) - 1]} ${year}`;
+    }
+    
+    function getCurrentMonthYear() {
+        const now = new Date();
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${months[now.getMonth()]} ${now.getFullYear()}`;
+    }
+    
+    function getStudentStatus(studentId, monthKey) {
+        return feeRecords[`${studentId}_${monthKey}`] === 'paid' ? 'paid' : 'pending';
+    }
+    
+    function getCollectedAmount(monthKey) {
+        let total = 0;
+        for (const student of students) {
+            if (getStudentStatus(student.id, monthKey) === 'paid') {
+                total += student.fee;
+            }
+        }
+        return total;
+    }
+    
+    function getPendingAmount(monthKey) {
+        let total = 0;
+        for (const student of students) {
+            if (getStudentStatus(student.id, monthKey) === 'pending') {
+                total += student.fee;
+            }
+        }
+        return total;
+    }
+    
+    function getCollectionRate(monthKey) {
+        const totalPossible = students.reduce((sum, s) => sum + s.fee, 0);
+        const collected = getCollectedAmount(monthKey);
+        if (totalPossible === 0) return 0;
+        return ((collected / totalPossible) * 100).toFixed(1);
+    }
+    
+    function markStudentPaid(studentId, monthKey) {
+        feeRecords[`${studentId}_${monthKey}`] = 'paid';
+        saveData();
+    }
+    
+    // ========== DATA MANAGEMENT ==========
+    function loadData() {
+        const stored = localStorage.getItem('tutorpro_simple');
+        if (stored) {
+            const data = JSON.parse(stored);
+            students = data.students || [];
+            feeRecords = data.feeRecords || {};
+        } else {
+            students = [
+                { id: 1, name: "Ali Khan", grade: "10th", subjects: "Mathematics, Physics", fee: 15000, phone: "03001234567" },
+                { id: 2, name: "Sara Ahmed", grade: "9th", subjects: "English, Biology", fee: 12000, phone: "03007654321" },
+                { id: 3, name: "Omar Riaz", grade: "10th", subjects: "Chemistry, Mathematics", fee: 15000, phone: "03005555555" }
+            ];
+            feeRecords = {};
+            saveData();
+        }
+        populateMonthSelector();
+        updateDashboard();
+        renderTable();
+        updatePaymentSelect();
+    }
+    
+    function saveData() {
+        localStorage.setItem('tutorpro_simple', JSON.stringify({ students, feeRecords }));
+        updateDashboard();
+        renderTable();
+    }
+    
+    function updateDashboard() {
+        const monthKey = currentViewMonth || getCurrentMonthKey();
+        const total = students.length;
+        const collected = getCollectedAmount(monthKey);
+        const pending = getPendingAmount(monthKey);
+        const rate = getCollectionRate(monthKey);
+        
+        document.getElementById('totalStudents').innerText = total;
+        document.getElementById('collectedAmount').innerText = collected.toLocaleString();
+        document.getElementById('pendingAmount').innerText = pending.toLocaleString();
+        document.getElementById('collectionRate').innerText = `${rate}%`;
+    }
+    
+    function populateMonthSelector() {
+        const select = document.getElementById('monthSelector');
+        const years = [2024, 2025, 2026];
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        let options = '<option value="">-- Current Month --</option>';
+        for (let y of years) {
+            for (let m = 0; m < 12; m++) {
+                const monthKey = `${y}-${String(m+1).padStart(2,'0')}`;
+                options += `<option value="${monthKey}">${months[m]} ${y}</option>`;
+            }
+        }
+        select.innerHTML = options;
+    }
+    
+    function changeMonth() {
+        const select = document.getElementById('monthSelector');
+        currentViewMonth = select.value || null;
+        updateDashboard();
+        renderTable();
+        updatePaymentSelect();
+        const monthDisplay = currentViewMonth ? getMonthDisplay(currentViewMonth) : getCurrentMonthYear();
+        document.getElementById('tableMonthLabel').innerHTML = monthDisplay;
+        showToast(`Showing records for ${monthDisplay}`, 'info');
+    }
+    
+    function renderTable() {
+        const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+        const monthKey = currentViewMonth || getCurrentMonthKey();
+        
+        const filtered = students.filter(s => 
+            s.name.toLowerCase().includes(searchTerm) || 
+            s.grade.toLowerCase().includes(searchTerm) ||
+            s.subjects.toLowerCase().includes(searchTerm) ||
+            s.phone.includes(searchTerm)
+        );
+        
+        const tbody = document.getElementById('tableBody');
+        if (!tbody) return;
+        
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;"><i class="fas fa-search"></i> No students found</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = filtered.map((s, index) => {
+            const status = getStudentStatus(s.id, monthKey);
+            const subjects = s.subjects.split(',').map(sub => `<span class="subject-tag"><i class="fas fa-book"></i> ${sub.trim()}</span>`).join('');
+            return `
+            <tr>
+                <td>${index + 1}</td>
+                <td><strong>${s.name}</strong></td>
+                <td>${s.grade}</td>
+                <td>${subjects}</td>
+                <td>${s.fee.toLocaleString()} PKR</td>
+                <td><span class="${status === 'paid' ? 'status-paid' : 'status-pending'}"><i class="fas ${status === 'paid' ? 'fa-check-circle' : 'fa-clock'}"></i> ${status === 'paid' ? 'Paid' : 'Pending'}</span></td>
+                <td><i class="fas fa-phone"></i> ${s.phone}</td>
+                <td>
+                    <button class="btn btn-primary" onclick="openEditModal(${s.id})" style="padding: 4px 10px; font-size: 11px;"><i class="fas fa-edit"></i></button>
+                    ${status === 'pending' ? `<button class="btn btn-success" onclick="markFeePaid(${s.id})" style="padding: 4px 10px; font-size: 11px;"><i class="fas fa-check"></i></button>` : ''}
+                    <button class="btn btn-danger" onclick="deleteStudent(${s.id})" style="padding: 4px 10px; font-size: 11px;"><i class="fas fa-trash-alt"></i></button>
+                </td>
+            </tr>
+            `;
+        }).join('');
+    }
+    
+    function updatePaymentSelect() {
+        const select = document.getElementById('paymentSelect');
+        if (!select) return;
+        const monthKey = currentViewMonth || getCurrentMonthKey();
+        const defaulters = students.filter(s => getStudentStatus(s.id, monthKey) === 'pending');
+        select.innerHTML = defaulters.map(s => 
+            `<option value="${s.id}">${s.name} - ${s.grade} (${s.fee.toLocaleString()} PKR)</option>`
+        ).join('');
+    }
+    
+    // ========== STUDENT FUNCTIONS ==========
+    function addStudent() {
+        const name = document.getElementById('studentName').value;
+        const grade = document.getElementById('studentClass').value;
+        const subjects = document.getElementById('studentSubjects').value;
+        const fee = parseInt(document.getElementById('studentFee').value);
+        const phone = document.getElementById('studentPhone').value;
+        
+        if (!name || !grade || !subjects || !fee || !phone) {
+            showToast('Please fill all fields!', 'warning');
+            return;
+        }
+        
+        students.push({
+            id: Date.now(),
+            name: name,
+            grade: grade,
+            subjects: subjects,
+            fee: fee,
+            phone: phone
+        });
+        
+        saveData();
+        
+        document.getElementById('studentName').value = '';
+        document.getElementById('studentClass').value = '';
+        document.getElementById('studentSubjects').value = '';
+        document.getElementById('studentFee').value = '';
+        document.getElementById('studentPhone').value = '';
+        
+        showToast(`Student ${name} registered successfully!`, 'success');
+    }
+    
+    function openEditModal(id) {
+        const student = students.find(s => s.id === id);
+        if (student) {
+            document.getElementById('editStudentId').value = student.id;
+            document.getElementById('editName').value = student.name;
+            document.getElementById('editClass').value = student.grade;
+            document.getElementById('editSubjects').value = student.subjects;
+            document.getElementById('editFee').value = student.fee;
+            document.getElementById('editPhone').value = student.phone;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+    }
+    
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+    
+    function saveEditStudent() {
+        const id = parseInt(document.getElementById('editStudentId').value);
+        const index = students.findIndex(s => s.id === id);
+        if (index !== -1) {
+            students[index] = {
+                ...students[index],
+                name: document.getElementById('editName').value,
+                grade: document.getElementById('editClass').value,
+                subjects: document.getElementById('editSubjects').value,
+                fee: parseInt(document.getElementById('editFee').value),
+                phone: document.getElementById('editPhone').value
+            };
+            saveData();
+            closeEditModal();
+            showToast('Student updated successfully!', 'success');
+        }
+    }
+    
+    function deleteStudent(id) {
+        const student = students.find(s => s.id === id);
+        if (student && confirm(`Delete ${student.name}?`)) {
+            students = students.filter(s => s.id !== id);
+            saveData();
+            showToast(`${student.name} deleted!`, 'info');
+        }
+    }
+    
+    function markFeePaid(id) {
+        const monthKey = currentViewMonth || getCurrentMonthKey();
+        const student = students.find(s => s.id === id);
+        const monthDisplay = getMonthDisplay(monthKey);
+        
+        if (student && confirm(`Mark ${student.name}'s fee (${student.fee.toLocaleString()} PKR) for ${monthDisplay} as PAID?`)) {
+            markStudentPaid(id, monthKey);
+            
+            const msg = `Fee Received Confirmation\n\nStudent: ${student.name}\nAmount: ${student.fee.toLocaleString()} PKR\nMonth: ${monthDisplay}\n\nThank you!`;
+            window.open(`https://wa.me/92${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+            
+            showToast(`${student.name}'s fee marked as paid!`, 'success');
+        }
+    }
+    
+    // ========== REMINDERS ==========
+    function sendReminderToDefaulters() {
+        const monthKey = currentViewMonth || getCurrentMonthKey();
+        const defaulters = students.filter(s => getStudentStatus(s.id, monthKey) === 'pending');
+        const monthDisplay = getMonthDisplay(monthKey);
+        
+        if (defaulters.length === 0) {
+            showToast('No pending fees! Everyone paid!', 'success');
+            return;
+        }
+        
+        const msg = `Fee Reminder\n\nDear Student/Parent,\n\nYour monthly tuition fee is pending.\nStudent: {name}\nAmount: {fee} PKR\nMonth: ${monthDisplay}\n\nPlease pay at your earliest convenience.\n\n- TutorPro`;
+        
+        if (confirm(`Send reminders to ${defaulters.length} student(s)?`)) {
+            defaulters.forEach((s, i) => {
+                setTimeout(() => {
+                    const message = msg.replace('{name}', s.name).replace('{fee}', s.fee.toLocaleString());
+                    window.open(`https://wa.me/92${s.phone}?text=${encodeURIComponent(message)}`, '_blank');
+                }, i * 2000);
+            });
+            showToast(`Opening WhatsApp for ${defaulters.length} student(s)`, 'info');
+        }
+    }
+    
+    function openPaymentModal() {
+        updatePaymentSelect();
+        document.getElementById('paymentModal').style.display = 'flex';
+    }
+    
+    function closePaymentModal() {
+        document.getElementById('paymentModal').style.display = 'none';
+    }
+    
+    function confirmPayment() {
+        const select = document.getElementById('paymentSelect');
+        const id = parseInt(select.value);
+        if (id) {
+            markFeePaid(id);
+            closePaymentModal();
+        }
+    }
+    
+    function exportData() {
+        const data = { students, feeRecords, exportDate: new Date().toISOString() };
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `tutorpro_data_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Data exported successfully!', 'success');
+    }
+    
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        const icon = document.getElementById('toastIcon');
+        const msgSpan = document.getElementById('toastMessage');
+        
+        const icons = { success: 'fa-check-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+        toast.className = `toast ${type}`;
+        icon.className = `fas ${icons[type]}`;
+        msgSpan.innerText = message;
+        toast.style.display = 'flex';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+    
+    // ========== AUTO REMINDER ==========
+    function checkAutoReminders() {
+        const today = new Date();
+        const currentDate = today.getDate();
+        const currentMonth = today.getMonth();
+        const lastReminder = localStorage.getItem('lastFeeReminder');
+        
+        if (currentDate === 5 && (!lastReminder || parseInt(lastReminder) !== currentMonth)) {
+            const defaulters = students.filter(s => getStudentStatus(s.id, getCurrentMonthKey()) === 'pending');
+            if (defaulters.length > 0 && confirm(`Auto Reminder: Send fee reminders to ${defaulters.length} student(s)?`)) {
+                sendReminderToDefaulters();
+                localStorage.setItem('lastFeeReminder', currentMonth);
+            }
+        }
+    }
+    
+    // ========== LOGIN ==========
+    function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        if (username === USERNAME && password === PASSWORD) {
+            localStorage.setItem('tutorLoggedIn', 'true');
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            loadData();
+            setTimeout(checkAutoReminders, 3000);
+        } else {
+            document.getElementById('errorMsg').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('errorMsg').style.display = 'none';
+            }, 2000);
+        }
+    }
+    
+    function logout() {
+        localStorage.removeItem('tutorLoggedIn');
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('loginPage').style.display = 'flex';
+    }
+    
+    function checkLogin() {
+        if (localStorage.getItem('tutorLoggedIn') === 'true') {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            loadData();
+            setTimeout(checkAutoReminders, 3000);
+        }
+    }
+    
+    checkLogin();
+    setInterval(checkAutoReminders, 3600000);
+</script>
+</body>
+</html>

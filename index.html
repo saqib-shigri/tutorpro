@@ -3,9 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>TutorPro - Simple Fee Management</title>
+    
+    <!-- PWA Meta Tags -->
+    <title>TutorPro - Fee Manager</title>
+    <meta name="description" content="Complete fee management system for tutors">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TutorPro">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons for different devices -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='50' text-anchor='middle' fill='white' font-weight='bold'%3ETP%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='50' text-anchor='middle' fill='white' font-weight='bold'%3ETP%3C/text%3E%3C/svg%3E">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
         * {
             margin: 0;
@@ -86,6 +102,38 @@
             display: none;
         }
 
+        /* PWA Install Banner */
+        .install-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 20px;
+            padding: 15px 20px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .install-banner button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
         /* Dashboard */
         .dashboard {
             display: none;
@@ -104,19 +152,11 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .header h1 {
             color: #1e293b;
             font-size: 24px;
-        }
-
-        .header h1 i {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-right: 10px;
         }
 
         .logout-btn {
@@ -126,14 +166,8 @@
             padding: 10px 20px;
             border-radius: 12px;
             cursor: pointer;
-            font-weight: 600;
         }
 
-        .logout-btn i {
-            margin-right: 8px;
-        }
-
-        /* Stats */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -146,23 +180,7 @@
             border-radius: 20px;
             padding: 22px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: transform 0.3s;
         }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-icon {
-            font-size: 32px;
-            margin-bottom: 12px;
-        }
-
-        .stat-icon.blue { color: #3b82f6; }
-        .stat-icon.green { color: #10b981; }
-        .stat-icon.red { color: #ef4444; }
-        .stat-icon.purple { color: #8b5cf6; }
 
         .stat-number {
             font-size: 32px;
@@ -176,27 +194,18 @@
             font-size: 13px;
         }
 
-        /* Cards */
         .card {
             background: white;
             border-radius: 20px;
             padding: 25px;
             margin-bottom: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .card h3 {
             margin-bottom: 18px;
             color: #1e293b;
-            font-weight: 600;
         }
 
-        .card h3 i {
-            margin-right: 10px;
-            color: #667eea;
-        }
-
-        /* Buttons */
         .btn {
             padding: 10px 20px;
             border: none;
@@ -205,11 +214,6 @@
             font-size: 14px;
             font-weight: 500;
             margin: 5px;
-            transition: all 0.3s;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
         }
 
         .btn-warning { background: #f59e0b; color: white; }
@@ -218,11 +222,6 @@
         .btn-danger { background: #ef4444; color: white; }
         .btn-secondary { background: #64748b; color: white; }
 
-        .btn i {
-            margin-right: 8px;
-        }
-
-        /* Forms */
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -235,12 +234,6 @@
             border: 2px solid #e2e8f0;
             border-radius: 12px;
             font-size: 14px;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .form-row input:focus {
-            outline: none;
-            border-color: #667eea;
         }
 
         .search-box {
@@ -264,7 +257,6 @@
             font-size: 14px;
         }
 
-        /* Tables */
         .table-wrapper {
             overflow-x: auto;
         }
@@ -283,7 +275,6 @@
         th {
             background: #f8fafc;
             font-weight: 600;
-            color: #475569;
         }
 
         .status-paid {
@@ -292,7 +283,6 @@
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 600;
             display: inline-block;
         }
 
@@ -302,7 +292,6 @@
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 600;
             display: inline-block;
         }
 
@@ -318,12 +307,10 @@
             padding: 4px 10px;
             border-radius: 15px;
             font-size: 11px;
-            font-weight: 500;
             display: inline-block;
             margin: 2px;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -345,24 +332,6 @@
             max-width: 500px;
         }
 
-        .modal-content h3 {
-            margin-bottom: 20px;
-        }
-
-        .modal-content h3 i {
-            margin-right: 10px;
-            color: #667eea;
-        }
-
-        .modal-content select {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 14px;
-        }
-
         .modal-buttons {
             display: flex;
             gap: 10px;
@@ -373,7 +342,6 @@
             flex: 1;
         }
 
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -386,143 +354,90 @@
             align-items: center;
             gap: 12px;
             z-index: 1100;
-            animation: slideIn 0.3s ease-out;
         }
 
         .toast.success { background: #10b981; }
-        .toast.warning { background: #f59e0b; }
-        .toast.info { background: #3b82f6; }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .dashboard {
-                padding: 10px;
-            }
-            .stats {
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
-            }
-            .stat-number {
-                font-size: 24px;
-            }
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .btn {
-                width: 100%;
-                margin: 5px 0;
-            }
-            .action-group {
-                flex-direction: column;
-            }
-            th, td {
-                font-size: 11px;
-                padding: 8px;
-            }
+            .dashboard { padding: 10px; }
+            .stats { grid-template-columns: 1fr 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .btn { width: 100%; }
+            .action-group { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
-<!-- LOGIN PAGE -->
+<!-- Login Page -->
 <div id="loginPage" class="login-container">
     <div class="login-card">
-        <h1><i class="fas fa-chalkboard-user"></i> TutorPro</h1>
+        <h1>TutorPro</h1>
         <p>Simple Fee Management System</p>
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
-        <button onclick="login()"><i class="fas fa-arrow-right-to-bracket"></i> Sign In</button>
-        <div id="errorMsg" class="error-msg"><i class="fas fa-exclamation-triangle"></i> Invalid username or password!</div>
+        <button onclick="login()">Sign In</button>
+        <div id="errorMsg" class="error-msg">Invalid username or password!</div>
     </div>
 </div>
 
-<!-- DASHBOARD -->
+<!-- Dashboard -->
 <div id="dashboard" class="dashboard">
     <div class="header">
-        <h1><i class="fas fa-chalkboard-user"></i> TutorPro - Fee Manager</h1>
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        <h1>TutorPro - Fee Manager</h1>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
 
-    <!-- Stats -->
     <div class="stats">
         <div class="stat-card">
-            <div class="stat-icon blue"><i class="fas fa-user-graduate"></i></div>
             <div class="stat-number" id="totalStudents">0</div>
             <div class="stat-label">Total Students</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon green"><i class="fas fa-money-bill-wave"></i></div>
             <div class="stat-number" id="collectedAmount">0</div>
             <div class="stat-label">Collected (PKR)</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon red"><i class="fas fa-hourglass-half"></i></div>
             <div class="stat-number" id="pendingAmount">0</div>
             <div class="stat-label">Pending (PKR)</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon purple"><i class="fas fa-chart-line"></i></div>
             <div class="stat-number" id="collectionRate">0%</div>
             <div class="stat-label">Collection Rate</div>
         </div>
     </div>
 
-    <!-- Quick Actions -->
     <div class="card">
-        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+        <h3>Quick Actions</h3>
         <div class="action-group">
-            <button class="btn btn-warning" onclick="sendReminderToDefaulters()"><i class="fas fa-bullhorn"></i> Send Reminder</button>
-            <button class="btn btn-success" onclick="openPaymentModal()"><i class="fas fa-check-circle"></i> Mark Fee Paid</button>
-            <button class="btn btn-primary" onclick="exportData()"><i class="fas fa-download"></i> Export Data</button>
+            <button class="btn btn-warning" onclick="sendReminder()">Send Reminder</button>
+            <button class="btn btn-success" onclick="openPaymentModal()">Mark Fee Paid</button>
+            <button class="btn btn-primary" onclick="exportData()">Export Data</button>
         </div>
     </div>
 
-    <!-- Add Student -->
     <div class="card">
-        <h3><i class="fas fa-user-plus"></i> Register New Student</h3>
+        <h3>Register New Student</h3>
         <div class="form-row">
             <input type="text" id="studentName" placeholder="Student Name">
-            <input type="text" id="studentClass" placeholder="Grade / Class">
-            <input type="text" id="studentSubjects" placeholder="Subjects (e.g., Math, English)">
-            <input type="number" id="studentFee" placeholder="Monthly Fee (PKR)">
+            <input type="text" id="studentClass" placeholder="Grade">
+            <input type="text" id="studentSubjects" placeholder="Subjects">
+            <input type="number" id="studentFee" placeholder="Monthly Fee">
             <input type="tel" id="studentPhone" placeholder="WhatsApp Number">
         </div>
-        <button class="btn btn-success" onclick="addStudent()"><i class="fas fa-save"></i> Register Student</button>
+        <button class="btn btn-success" onclick="addStudent()">Register Student</button>
     </div>
 
-    <!-- Month Selector -->
     <div class="card">
-        <h3><i class="fas fa-calendar-alt"></i> Select Month</h3>
-        <select id="monthSelector" class="form-control" style="width:100%; padding:12px; border-radius:12px;" onchange="changeMonth()">
-            <option value="">-- Current Month --</option>
-        </select>
-    </div>
-
-    <!-- Students List -->
-    <div class="card">
-        <h3><i class="fas fa-users"></i> Students List - <span id="tableMonthLabel">Current Month</span></h3>
+        <h3>Students List</h3>
         <div class="search-box">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search by name, grade or phone..." onkeyup="renderTable()">
+            <input type="text" id="searchInput" placeholder="Search..." onkeyup="renderTable()">
         </div>
         <div class="table-wrapper">
             <table>
                 <thead>
-                    <tr>
-                        <th><i class="fas fa-hashtag"></i></th>
-                        <th><i class="fas fa-user"></i> Name</th>
-                        <th><i class="fas fa-graduation-cap"></i> Grade</th>
-                        <th><i class="fas fa-book"></i> Subjects</th>
-                        <th><i class="fas fa-dollar-sign"></i> Fee</th>
-                        <th><i class="fas fa-flag-checkered"></i> Status</th>
-                        <th><i class="fas fa-phone"></i> Phone</th>
-                        <th><i class="fas fa-cog"></i> Actions</th>
-                    </tr>
+                    <tr><th>#</th><th>Name</th><th>Grade</th><th>Subjects</th><th>Fee</th><th>Status</th><th>Phone</th><th>Actions</th></tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
             </table>
@@ -530,19 +445,19 @@
     </div>
 </div>
 
-<!-- Edit Student Modal -->
+<!-- Edit Modal -->
 <div id="editModal" class="modal">
     <div class="modal-content">
-        <h3><i class="fas fa-pen"></i> Edit Student</h3>
+        <h3>Edit Student</h3>
         <input type="hidden" id="editStudentId">
-        <input type="text" id="editName" placeholder="Student Name">
-        <input type="text" id="editClass" placeholder="Grade/Class">
+        <input type="text" id="editName" placeholder="Name">
+        <input type="text" id="editClass" placeholder="Grade">
         <input type="text" id="editSubjects" placeholder="Subjects">
-        <input type="number" id="editFee" placeholder="Monthly Fee (PKR)">
-        <input type="tel" id="editPhone" placeholder="WhatsApp Number">
+        <input type="number" id="editFee" placeholder="Fee">
+        <input type="tel" id="editPhone" placeholder="Phone">
         <div class="modal-buttons">
-            <button class="btn btn-success" onclick="saveEditStudent()"><i class="fas fa-save"></i> Save</button>
-            <button class="btn btn-secondary" onclick="closeEditModal()"><i class="fas fa-times"></i> Cancel</button>
+            <button class="btn btn-success" onclick="saveEdit()">Save</button>
+            <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
         </div>
     </div>
 </div>
@@ -550,203 +465,136 @@
 <!-- Payment Modal -->
 <div id="paymentModal" class="modal">
     <div class="modal-content">
-        <h3><i class="fas fa-check-circle"></i> Mark Fee as Paid</h3>
+        <h3>Mark Fee as Paid</h3>
         <select id="paymentSelect"></select>
         <div class="modal-buttons">
-            <button class="btn btn-success" onclick="confirmPayment()"><i class="fas fa-check"></i> Confirm</button>
-            <button class="btn btn-secondary" onclick="closePaymentModal()"><i class="fas fa-times"></i> Cancel</button>
+            <button class="btn btn-success" onclick="confirmPayment()">Confirm</button>
+            <button class="btn btn-secondary" onclick="closePaymentModal()">Cancel</button>
         </div>
     </div>
 </div>
 
-<!-- Toast -->
-<div id="toast" class="toast">
-    <i class="fas" id="toastIcon"></i>
-    <span id="toastMessage"></span>
+<!-- PWA Install Banner -->
+<div id="installBanner" class="install-banner">
+    <div><i class="fas fa-download"></i> Install TutorPro App</div>
+    <button onclick="installApp()">Install</button>
 </div>
 
 <script>
-    // ========== CONFIGURATION ==========
+    // PWA Installation
+    let deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('installBanner').style.display = 'flex';
+    });
+
+    function installApp() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(() => {
+                document.getElementById('installBanner').style.display = 'none';
+                deferredPrompt = null;
+            });
+        }
+    }
+
+    // App Logic
     let USERNAME = "tutor";
     let PASSWORD = "tutor123";
-    
     let students = [];
     let feeRecords = {};
-    let currentViewMonth = null;
-    
-    // ========== HELPER FUNCTIONS ==========
+
     function getCurrentMonthKey() {
         const now = new Date();
         return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     }
-    
-    function getMonthDisplay(monthKey) {
-        if (!monthKey) return getCurrentMonthYear();
-        const [year, month] = monthKey.split('-');
-        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        return `${months[parseInt(month) - 1]} ${year}`;
+
+    function getStudentStatus(id, month) {
+        return feeRecords[`${id}_${month}`] === 'paid' ? 'paid' : 'pending';
     }
-    
-    function getCurrentMonthYear() {
-        const now = new Date();
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return `${months[now.getMonth()]} ${now.getFullYear()}`;
-    }
-    
-    function getStudentStatus(studentId, monthKey) {
-        return feeRecords[`${studentId}_${monthKey}`] === 'paid' ? 'paid' : 'pending';
-    }
-    
-    function getCollectedAmount(monthKey) {
+
+    function getCollected() {
+        const month = getCurrentMonthKey();
         let total = 0;
-        for (const student of students) {
-            if (getStudentStatus(student.id, monthKey) === 'paid') {
-                total += student.fee;
-            }
+        for (const s of students) {
+            if (getStudentStatus(s.id, month) === 'paid') total += s.fee;
         }
         return total;
     }
-    
-    function getPendingAmount(monthKey) {
+
+    function getPending() {
+        const month = getCurrentMonthKey();
         let total = 0;
-        for (const student of students) {
-            if (getStudentStatus(student.id, monthKey) === 'pending') {
-                total += student.fee;
-            }
+        for (const s of students) {
+            if (getStudentStatus(s.id, month) === 'pending') total += s.fee;
         }
         return total;
     }
-    
-    function getCollectionRate(monthKey) {
-        const totalPossible = students.reduce((sum, s) => sum + s.fee, 0);
-        const collected = getCollectedAmount(monthKey);
-        if (totalPossible === 0) return 0;
-        return ((collected / totalPossible) * 100).toFixed(1);
-    }
-    
-    function markStudentPaid(studentId, monthKey) {
-        feeRecords[`${studentId}_${monthKey}`] = 'paid';
-        saveData();
-    }
-    
-    // ========== DATA MANAGEMENT ==========
+
     function loadData() {
-        const stored = localStorage.getItem('tutorpro_simple');
+        const stored = localStorage.getItem('tutorpro_data');
         if (stored) {
             const data = JSON.parse(stored);
             students = data.students || [];
             feeRecords = data.feeRecords || {};
         } else {
             students = [
-                { id: 1, name: "Ali Khan", grade: "10th", subjects: "Mathematics, Physics", fee: 15000, phone: "03001234567" },
-                { id: 2, name: "Sara Ahmed", grade: "9th", subjects: "English, Biology", fee: 12000, phone: "03007654321" },
-                { id: 3, name: "Omar Riaz", grade: "10th", subjects: "Chemistry, Mathematics", fee: 15000, phone: "03005555555" }
+                { id: 1, name: "Ali Khan", grade: "10th", subjects: "Math, Physics", fee: 15000, phone: "03001234567" },
+                { id: 2, name: "Sara Ahmed", grade: "9th", subjects: "English, Biology", fee: 12000, phone: "03007654321" }
             ];
-            feeRecords = {};
-            saveData();
         }
-        populateMonthSelector();
         updateDashboard();
         renderTable();
-        updatePaymentSelect();
     }
-    
+
     function saveData() {
-        localStorage.setItem('tutorpro_simple', JSON.stringify({ students, feeRecords }));
+        localStorage.setItem('tutorpro_data', JSON.stringify({ students, feeRecords }));
         updateDashboard();
         renderTable();
     }
-    
+
     function updateDashboard() {
-        const monthKey = currentViewMonth || getCurrentMonthKey();
         const total = students.length;
-        const collected = getCollectedAmount(monthKey);
-        const pending = getPendingAmount(monthKey);
-        const rate = getCollectionRate(monthKey);
+        const collected = getCollected();
+        const pending = getPending();
+        const totalPossible = students.reduce((sum, s) => sum + s.fee, 0);
+        const rate = totalPossible > 0 ? ((collected / totalPossible) * 100).toFixed(1) : 0;
         
         document.getElementById('totalStudents').innerText = total;
         document.getElementById('collectedAmount').innerText = collected.toLocaleString();
         document.getElementById('pendingAmount').innerText = pending.toLocaleString();
         document.getElementById('collectionRate').innerText = `${rate}%`;
     }
-    
-    function populateMonthSelector() {
-        const select = document.getElementById('monthSelector');
-        const years = [2024, 2025, 2026];
-        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        let options = '<option value="">-- Current Month --</option>';
-        for (let y of years) {
-            for (let m = 0; m < 12; m++) {
-                const monthKey = `${y}-${String(m+1).padStart(2,'0')}`;
-                options += `<option value="${monthKey}">${months[m]} ${y}</option>`;
-            }
-        }
-        select.innerHTML = options;
-    }
-    
-    function changeMonth() {
-        const select = document.getElementById('monthSelector');
-        currentViewMonth = select.value || null;
-        updateDashboard();
-        renderTable();
-        updatePaymentSelect();
-        const monthDisplay = currentViewMonth ? getMonthDisplay(currentViewMonth) : getCurrentMonthYear();
-        document.getElementById('tableMonthLabel').innerHTML = monthDisplay;
-        showToast(`Showing records for ${monthDisplay}`, 'info');
-    }
-    
+
     function renderTable() {
-        const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
-        const monthKey = currentViewMonth || getCurrentMonthKey();
-        
-        const filtered = students.filter(s => 
-            s.name.toLowerCase().includes(searchTerm) || 
-            s.grade.toLowerCase().includes(searchTerm) ||
-            s.subjects.toLowerCase().includes(searchTerm) ||
-            s.phone.includes(searchTerm)
-        );
-        
+        const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
+        const month = getCurrentMonthKey();
+        const filtered = students.filter(s => s.name.toLowerCase().includes(search));
         const tbody = document.getElementById('tableBody');
-        if (!tbody) return;
         
-        if (filtered.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;"><i class="fas fa-search"></i> No students found</td></tr>';
-            return;
-        }
-        
-        tbody.innerHTML = filtered.map((s, index) => {
-            const status = getStudentStatus(s.id, monthKey);
-            const subjects = s.subjects.split(',').map(sub => `<span class="subject-tag"><i class="fas fa-book"></i> ${sub.trim()}</span>`).join('');
+        tbody.innerHTML = filtered.map((s, i) => {
+            const status = getStudentStatus(s.id, month);
             return `
-            <tr>
-                <td>${index + 1}</td>
-                <td><strong>${s.name}</strong></td>
-                <td>${s.grade}</td>
-                <td>${subjects}</td>
-                <td>${s.fee.toLocaleString()} PKR</td>
-                <td><span class="${status === 'paid' ? 'status-paid' : 'status-pending'}"><i class="fas ${status === 'paid' ? 'fa-check-circle' : 'fa-clock'}"></i> ${status === 'paid' ? 'Paid' : 'Pending'}</span></td>
-                <td><i class="fas fa-phone"></i> ${s.phone}</td>
-                <td>
-                    <button class="btn btn-primary" onclick="openEditModal(${s.id})" style="padding: 4px 10px; font-size: 11px;"><i class="fas fa-edit"></i></button>
-                    ${status === 'pending' ? `<button class="btn btn-success" onclick="markFeePaid(${s.id})" style="padding: 4px 10px; font-size: 11px;"><i class="fas fa-check"></i></button>` : ''}
-                    <button class="btn btn-danger" onclick="deleteStudent(${s.id})" style="padding: 4px 10px; font-size: 11px;"><i class="fas fa-trash-alt"></i></button>
-                </td>
-            </tr>
+                <tr>
+                    <td>${i+1}</td>
+                    <td><strong>${s.name}</strong></td>
+                    <td>${s.grade}</td>
+                    <td>${s.subjects}</td>
+                    <td>${s.fee.toLocaleString()}</td>
+                    <td><span class="${status === 'paid' ? 'status-paid' : 'status-pending'}">${status === 'paid' ? 'Paid' : 'Pending'}</span></td>
+                    <td>${s.phone}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="openEdit(${s.id})" style="padding:4px 10px;">Edit</button>
+                        ${status === 'pending' ? `<button class="btn btn-success" onclick="markPaid(${s.id})" style="padding:4px 10px;">Pay</button>` : ''}
+                        <button class="btn btn-danger" onclick="deleteStudent(${s.id})" style="padding:4px 10px;">Del</button>
+                    </td>
+                </tr>
             `;
         }).join('');
     }
-    
-    function updatePaymentSelect() {
-        const select = document.getElementById('paymentSelect');
-        if (!select) return;
-        const monthKey = currentViewMonth || getCurrentMonthKey();
-        const defaulters = students.filter(s => getStudentStatus(s.id, monthKey) === 'pending');
-        select.innerHTML = defaulters.map(s => 
-            `<option value="${s.id}">${s.name} - ${s.grade} (${s.fee.toLocaleString()} PKR)</option>`
-        ).join('');
-    }
-    
-    // ========== STUDENT FUNCTIONS ==========
+
     function addStudent() {
         const name = document.getElementById('studentName').value;
         const grade = document.getElementById('studentClass').value;
@@ -755,19 +603,11 @@
         const phone = document.getElementById('studentPhone').value;
         
         if (!name || !grade || !subjects || !fee || !phone) {
-            showToast('Please fill all fields!', 'warning');
+            alert('Fill all fields!');
             return;
         }
         
-        students.push({
-            id: Date.now(),
-            name: name,
-            grade: grade,
-            subjects: subjects,
-            fee: fee,
-            phone: phone
-        });
-        
+        students.push({ id: Date.now(), name, grade, subjects, fee, phone });
         saveData();
         
         document.getElementById('studentName').value = '';
@@ -776,27 +616,27 @@
         document.getElementById('studentFee').value = '';
         document.getElementById('studentPhone').value = '';
         
-        showToast(`Student ${name} registered successfully!`, 'success');
+        alert('Student added!');
     }
-    
-    function openEditModal(id) {
-        const student = students.find(s => s.id === id);
-        if (student) {
-            document.getElementById('editStudentId').value = student.id;
-            document.getElementById('editName').value = student.name;
-            document.getElementById('editClass').value = student.grade;
-            document.getElementById('editSubjects').value = student.subjects;
-            document.getElementById('editFee').value = student.fee;
-            document.getElementById('editPhone').value = student.phone;
+
+    function openEdit(id) {
+        const s = students.find(s => s.id === id);
+        if (s) {
+            document.getElementById('editStudentId').value = s.id;
+            document.getElementById('editName').value = s.name;
+            document.getElementById('editClass').value = s.grade;
+            document.getElementById('editSubjects').value = s.subjects;
+            document.getElementById('editFee').value = s.fee;
+            document.getElementById('editPhone').value = s.phone;
             document.getElementById('editModal').style.display = 'flex';
         }
     }
-    
+
     function closeEditModal() {
         document.getElementById('editModal').style.display = 'none';
     }
-    
-    function saveEditStudent() {
+
+    function saveEdit() {
         const id = parseInt(document.getElementById('editStudentId').value);
         const index = students.findIndex(s => s.id === id);
         if (index !== -1) {
@@ -810,128 +650,85 @@
             };
             saveData();
             closeEditModal();
-            showToast('Student updated successfully!', 'success');
+            alert('Student updated!');
         }
     }
-    
+
     function deleteStudent(id) {
-        const student = students.find(s => s.id === id);
-        if (student && confirm(`Delete ${student.name}?`)) {
+        if (confirm('Delete student?')) {
             students = students.filter(s => s.id !== id);
             saveData();
-            showToast(`${student.name} deleted!`, 'info');
         }
     }
-    
-    function markFeePaid(id) {
-        const monthKey = currentViewMonth || getCurrentMonthKey();
+
+    function markPaid(id) {
+        const month = getCurrentMonthKey();
         const student = students.find(s => s.id === id);
-        const monthDisplay = getMonthDisplay(monthKey);
-        
-        if (student && confirm(`Mark ${student.name}'s fee (${student.fee.toLocaleString()} PKR) for ${monthDisplay} as PAID?`)) {
-            markStudentPaid(id, monthKey);
-            
-            const msg = `Fee Received Confirmation\n\nStudent: ${student.name}\nAmount: ${student.fee.toLocaleString()} PKR\nMonth: ${monthDisplay}\n\nThank you!`;
+        if (student && confirm(`Mark ${student.name}'s fee as PAID?`)) {
+            feeRecords[`${id}_${month}`] = 'paid';
+            saveData();
+            const msg = `Fee Received!\nStudent: ${student.name}\nAmount: ${student.fee} PKR\nThank you!`;
             window.open(`https://wa.me/92${student.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-            
-            showToast(`${student.name}'s fee marked as paid!`, 'success');
         }
     }
-    
-    // ========== REMINDERS ==========
-    function sendReminderToDefaulters() {
-        const monthKey = currentViewMonth || getCurrentMonthKey();
-        const defaulters = students.filter(s => getStudentStatus(s.id, monthKey) === 'pending');
-        const monthDisplay = getMonthDisplay(monthKey);
-        
+
+    function sendReminder() {
+        const month = getCurrentMonthKey();
+        const defaulters = students.filter(s => getStudentStatus(s.id, month) === 'pending');
         if (defaulters.length === 0) {
-            showToast('No pending fees! Everyone paid!', 'success');
+            alert('No defaulters!');
             return;
         }
         
-        const msg = `Fee Reminder\n\nDear Student/Parent,\n\nYour monthly tuition fee is pending.\nStudent: {name}\nAmount: {fee} PKR\nMonth: ${monthDisplay}\n\nPlease pay at your earliest convenience.\n\n- TutorPro`;
-        
-        if (confirm(`Send reminders to ${defaulters.length} student(s)?`)) {
+        const msg = `Fee Reminder!\nYour monthly fee is pending.\nPlease pay at earliest.`;
+        if (confirm(`Send to ${defaulters.length} students?`)) {
             defaulters.forEach((s, i) => {
                 setTimeout(() => {
-                    const message = msg.replace('{name}', s.name).replace('{fee}', s.fee.toLocaleString());
-                    window.open(`https://wa.me/92${s.phone}?text=${encodeURIComponent(message)}`, '_blank');
+                    window.open(`https://wa.me/92${s.phone}?text=${encodeURIComponent(msg)}`, '_blank');
                 }, i * 2000);
             });
-            showToast(`Opening WhatsApp for ${defaulters.length} student(s)`, 'info');
         }
     }
-    
+
     function openPaymentModal() {
-        updatePaymentSelect();
+        const month = getCurrentMonthKey();
+        const defaulters = students.filter(s => getStudentStatus(s.id, month) === 'pending');
+        const select = document.getElementById('paymentSelect');
+        select.innerHTML = defaulters.map(s => `<option value="${s.id}">${s.name} - ${s.fee} PKR</option>`).join('');
         document.getElementById('paymentModal').style.display = 'flex';
     }
-    
+
     function closePaymentModal() {
         document.getElementById('paymentModal').style.display = 'none';
     }
-    
+
     function confirmPayment() {
-        const select = document.getElementById('paymentSelect');
-        const id = parseInt(select.value);
+        const id = parseInt(document.getElementById('paymentSelect').value);
         if (id) {
-            markFeePaid(id);
+            markPaid(id);
             closePaymentModal();
         }
     }
-    
+
     function exportData() {
-        const data = { students, feeRecords, exportDate: new Date().toISOString() };
-        const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+        const data = JSON.stringify({ students, feeRecords }, null, 2);
+        const blob = new Blob([data], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `tutorpro_data_${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `tutorpro_backup_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
-        URL.revokeObjectURL(url);
-        showToast('Data exported successfully!', 'success');
+        alert('Data exported!');
     }
-    
-    function showToast(message, type = 'info') {
-        const toast = document.getElementById('toast');
-        const icon = document.getElementById('toastIcon');
-        const msgSpan = document.getElementById('toastMessage');
-        
-        const icons = { success: 'fa-check-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
-        toast.className = `toast ${type}`;
-        icon.className = `fas ${icons[type]}`;
-        msgSpan.innerText = message;
-        toast.style.display = 'flex';
-        setTimeout(() => { toast.style.display = 'none'; }, 3000);
-    }
-    
-    // ========== AUTO REMINDER ==========
-    function checkAutoReminders() {
-        const today = new Date();
-        const currentDate = today.getDate();
-        const currentMonth = today.getMonth();
-        const lastReminder = localStorage.getItem('lastFeeReminder');
-        
-        if (currentDate === 5 && (!lastReminder || parseInt(lastReminder) !== currentMonth)) {
-            const defaulters = students.filter(s => getStudentStatus(s.id, getCurrentMonthKey()) === 'pending');
-            if (defaulters.length > 0 && confirm(`Auto Reminder: Send fee reminders to ${defaulters.length} student(s)?`)) {
-                sendReminderToDefaulters();
-                localStorage.setItem('lastFeeReminder', currentMonth);
-            }
-        }
-    }
-    
-    // ========== LOGIN ==========
+
     function login() {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        
-        if (username === USERNAME && password === PASSWORD) {
-            localStorage.setItem('tutorLoggedIn', 'true');
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+        if (user === USERNAME && pass === PASSWORD) {
+            localStorage.setItem('loggedIn', 'true');
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             loadData();
-            setTimeout(checkAutoReminders, 3000);
         } else {
             document.getElementById('errorMsg').style.display = 'block';
             setTimeout(() => {
@@ -939,24 +736,22 @@
             }, 2000);
         }
     }
-    
+
     function logout() {
-        localStorage.removeItem('tutorLoggedIn');
+        localStorage.removeItem('loggedIn');
         document.getElementById('dashboard').style.display = 'none';
         document.getElementById('loginPage').style.display = 'flex';
     }
-    
+
     function checkLogin() {
-        if (localStorage.getItem('tutorLoggedIn') === 'true') {
+        if (localStorage.getItem('loggedIn') === 'true') {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             loadData();
-            setTimeout(checkAutoReminders, 3000);
         }
     }
-    
+
     checkLogin();
-    setInterval(checkAutoReminders, 3600000);
 </script>
 </body>
 </html>
